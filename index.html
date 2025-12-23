@@ -907,6 +907,62 @@
             font-size: 14px !important;
             animation: slideDown 0.5s ease-out !important;
         }
+        
+        /* Install Instructions Modal */
+        .install-instructions-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 1004;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .install-instructions-content {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        
+        .install-steps {
+            text-align: left;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #E07A5F;
+        }
+        
+        .install-step {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .step-number {
+            background: #E07A5F;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
     </style>
 </head>
 <body>
@@ -1187,13 +1243,67 @@
         <i class="fas fa-eye"></i> Public Read-Only View | Admin Login Required for Editing
     </div>
 
+    <!-- Install Instructions Modal -->
+    <div id="installInstructions" class="install-instructions-modal">
+        <div class="install-instructions-content">
+            <h3 style="color:#E07A5F; margin-bottom:20px;">
+                <i class="fas fa-mobile-alt"></i> Install Kuwait Zoo App
+            </h3>
+            
+            <div id="chromeInstructions" class="install-steps">
+                <p style="font-weight:bold; margin-bottom:15px;">For Chrome/Android:</p>
+                <div class="install-step">
+                    <div class="step-number">1</div>
+                    <div>Tap the <strong>menu button (⋮)</strong> in Chrome</div>
+                </div>
+                <div class="install-step">
+                    <div class="step-number">2</div>
+                    <div>Select <strong>"Add to Home screen"</strong> or <strong>"Install App"</strong></div>
+                </div>
+                <div class="install-step">
+                    <div class="step-number">3</div>
+                    <div>Tap <strong>"Add"</strong> or <strong>"Install"</strong> to complete</div>
+                </div>
+            </div>
+            
+            <div id="safariInstructions" class="install-steps" style="display:none;">
+                <p style="font-weight:bold; margin-bottom:15px;">For Safari/iOS:</p>
+                <div class="install-step">
+                    <div class="step-number">1</div>
+                    <div>Tap the <strong>Share button (📤)</strong> at the bottom</div>
+                </div>
+                <div class="install-step">
+                    <div class="step-number">2</div>
+                    <div>Scroll down and select <strong>"Add to Home Screen"</strong></div>
+                </div>
+                <div class="install-step">
+                    <div class="step-number">3</div>
+                    <div>Tap <strong>"Add"</strong> in the top right corner</div>
+                </div>
+            </div>
+            
+            <div style="margin:20px 0; padding:15px; background:#e8f4fd; border-radius:10px;">
+                <p style="color:#333; font-size:14px; margin:0;">
+                    <i class="fas fa-info-circle" style="color:#2196F3;"></i>
+                    Once installed, the app will work offline and can be opened like a regular app!
+                </p>
+            </div>
+            
+            <button onclick="document.getElementById('installInstructions').style.display='none';" 
+                    style="background:#E07A5F; color:white; padding:14px 30px; border:none; 
+                           border-radius:30px; font-size:16px; font-weight:bold; width:100%; cursor:pointer;">
+                Close
+            </button>
+        </div>
+    </div>
+
     <!-- iOS Install Modal -->
     <div id="iosInstallModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:1003; justify-content:center; align-items:center; flex-direction:column; padding:20px;">
         <div style="background:white; color:#333; border-radius:15px; padding:25px; max-width:90%; max-height:90%; overflow-y:auto; box-shadow:0 10px 30px rgba(0,0,0,0.5); text-align:center;">
             <h3 style="color:#E07A5F; margin-bottom:20px;">📱 Install Kuwait Zoo App</h3>
-            <p style="margin-bottom:20px; font-size:17px;">To add this app to the home screen on your iPhone, please follow the steps below::</p>
+            <p style="margin-bottom:20px; font-size:17px;">To add this app to the home screen on your iPhone, please follow the steps below:</p>
             
-            <p style="font-weight:bold;">1. Tap the Share icon (the box with an upward arrow or 3 dot)."./p>
+            <p style="font-weight:bold;">1. Tap the Share icon (the box with an upward arrow or 3 dots).</p>
             <img src="https://support.apple.com/library/content/dam/edam/applecare/images/en_US/iOS/ios-17-share-button-home-screen.png" alt="Step 1" style="width:100%; border-radius:10px; margin:15px 0; box-shadow:0 5px 15px rgba(0,0,0,0.3);">
             
             <p style="font-weight:bold;">2. Scroll down and tap "Add to Home Screen".</p>
@@ -1207,7 +1317,11 @@
     </div>
 
     <script>
+        // ========== GLOBAL VARIABLES ==========
         let deferredPrompt;
+        let currentVideoIndex = 0;
+        let isMuted = true;
+        let selectedRating = 0;
         
         const videoSources = [
             {
@@ -1217,20 +1331,19 @@
             }
         ];
         
-        let currentVideoIndex = 0;
-        let isMuted = true;
-        let selectedRating = 0;
-        
+        // ========== DOM CONTENT LOADED ==========
         document.addEventListener('DOMContentLoaded', function() {
+            // Set current date
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             const today = new Date();
             const formattedDate = today.toLocaleDateString('en-US', options);
-            
             document.getElementById('current-date').textContent = formattedDate;
             document.getElementById('footer-date').textContent = formattedDate;
             
+            // Load video
             setTimeout(() => loadVideo(currentVideoIndex), 100);
             
+            // Make all editable elements read-only
             document.querySelectorAll('.editable, [contenteditable="true"]').forEach(el => {
                 el.setAttribute('contenteditable', 'false');
                 el.style.cursor = 'default';
@@ -1241,6 +1354,7 @@
                 });
             });
             
+            // Enable/Disable buttons
             document.querySelectorAll('button').forEach(btn => {
                 if (btn.classList.contains('video-control-btn') || 
                     btn.classList.contains('action-btn') || 
@@ -1259,6 +1373,7 @@
                 }
             });
             
+            // Flower image fallback
             const flowerImg = document.querySelector('.round-flower-image');
             if (flowerImg) {
                 flowerImg.addEventListener('error', function() {
@@ -1266,6 +1381,33 @@
                 });
             }
             
+            // Rating system
+            setupRatingSystem();
+            
+            // OFFLINE NOTIFICATION SYSTEM
+            setupOfflineNotifications();
+            
+            // PWA INSTALLATION SYSTEM
+            setupPWAInstallation();
+            
+            // Service Worker Registration
+            registerServiceWorker();
+            
+            // Save data to localStorage for offline use
+            saveDataToLocal();
+            
+            // Prevent drag, drop and right-click
+            document.addEventListener('dragstart', e => e.preventDefault());
+            document.addEventListener('drop', e => e.preventDefault());
+            document.addEventListener('contextmenu', e => {
+                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                }
+            });
+        });
+        
+        // ========== RATING SYSTEM FUNCTIONS ==========
+        function setupRatingSystem() {
             document.getElementById('rate-btn').addEventListener('click', function() {
                 const ratingModal = document.getElementById('rating-modal');
                 ratingModal.style.display = ratingModal.style.display === 'block' ? 'none' : 'block';
@@ -1288,17 +1430,6 @@
                 updateStars(selectedRating);
             });
             
-            function updateStars(value, isHover = false) {
-                document.querySelectorAll('.star').forEach(s => {
-                    const starValue = parseInt(s.dataset.value);
-                    if (starValue <= value) {
-                        s.style.color = '#FFD700';
-                    } else {
-                        s.style.color = '#ccc';
-                    }
-                });
-            }
-            
             document.getElementById('send-rating').addEventListener('click', function() {
                 if (selectedRating > 0) {
                     const stars = '⭐'.repeat(selectedRating);
@@ -1307,8 +1438,21 @@
                     window.open(whatsappUrl, '_blank');
                 }
             });
-            
-            // ========== OFFLINE NOTIFICATION CODE ==========
+        }
+        
+        function updateStars(value, isHover = false) {
+            document.querySelectorAll('.star').forEach(s => {
+                const starValue = parseInt(s.dataset.value);
+                if (starValue <= value) {
+                    s.style.color = '#FFD700';
+                } else {
+                    s.style.color = '#ccc';
+                }
+            });
+        }
+        
+        // ========== OFFLINE NOTIFICATION SYSTEM ==========
+        function setupOfflineNotifications() {
             // Show offline notification on load
             if (!navigator.onLine) {
                 showOfflineNotification();
@@ -1318,185 +1462,275 @@
             window.addEventListener('online', function() {
                 removeOfflineNotification();
                 showOnlineNotification();
+                console.log('You are now online!');
             });
             
             window.addEventListener('offline', function() {
                 showOfflineNotification();
+                console.log('You are now offline!');
             });
+        }
+        
+        function showOfflineNotification() {
+            // Remove any existing notifications
+            removeOfflineNotification();
+            removeOnlineNotification();
             
-            function showOfflineNotification() {
-                // Remove any existing notifications
+            const offlineMsg = document.createElement('div');
+            offlineMsg.id = 'offline-notification';
+            offlineMsg.className = 'offline-notification';
+            offlineMsg.innerHTML = '⚠️ You are offline. App is running in offline mode.';
+            document.body.appendChild(offlineMsg);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
                 removeOfflineNotification();
+            }, 5000);
+        }
+        
+        function showOnlineNotification() {
+            const onlineMsg = document.createElement('div');
+            onlineMsg.id = 'online-notification';
+            onlineMsg.className = 'online-notification';
+            onlineMsg.innerHTML = '✅ You are back online';
+            document.body.appendChild(onlineMsg);
+            
+            // Auto-remove after 3 seconds
+            setTimeout(() => {
                 removeOnlineNotification();
-                
-                const offlineMsg = document.createElement('div');
-                offlineMsg.id = 'offline-notification';
-                offlineMsg.className = 'offline-notification';
-                offlineMsg.innerHTML = '⚠️ You are offline. App is running in offline mode.';
-                document.body.appendChild(offlineMsg);
-                
-                // Auto-remove after 5 seconds
+            }, 3000);
+        }
+        
+        function removeOfflineNotification() {
+            const offlineMsg = document.getElementById('offline-notification');
+            if (offlineMsg) {
+                offlineMsg.style.transition = 'opacity 0.5s ease';
+                offlineMsg.style.opacity = '0';
                 setTimeout(() => {
-                    removeOfflineNotification();
-                }, 5000);
+                    if (offlineMsg && offlineMsg.parentNode) {
+                        offlineMsg.parentNode.removeChild(offlineMsg);
+                    }
+                }, 500);
             }
-            
-            function showOnlineNotification() {
-                const onlineMsg = document.createElement('div');
-                onlineMsg.id = 'online-notification';
-                onlineMsg.className = 'online-notification';
-                onlineMsg.innerHTML = '✅ You are back online';
-                document.body.appendChild(onlineMsg);
-                
-                // Auto-remove after 3 seconds
+        }
+        
+        function removeOnlineNotification() {
+            const onlineMsg = document.getElementById('online-notification');
+            if (onlineMsg) {
+                onlineMsg.style.transition = 'opacity 0.5s ease';
+                onlineMsg.style.opacity = '0';
                 setTimeout(() => {
-                    removeOnlineNotification();
-                }, 3000);
+                    if (onlineMsg && onlineMsg.parentNode) {
+                        onlineMsg.parentNode.removeChild(onlineMsg);
+                    }
+                }, 500);
             }
-            
-            function removeOfflineNotification() {
-                const offlineMsg = document.getElementById('offline-notification');
-                if (offlineMsg) {
-                    offlineMsg.style.transition = 'opacity 0.5s ease';
-                    offlineMsg.style.opacity = '0';
-                    setTimeout(() => {
-                        if (offlineMsg && offlineMsg.parentNode) {
-                            offlineMsg.parentNode.removeChild(offlineMsg);
-                        }
-                    }, 500);
-                }
-            }
-            
-            function removeOnlineNotification() {
-                const onlineMsg = document.getElementById('online-notification');
-                if (onlineMsg) {
-                    onlineMsg.style.transition = 'opacity 0.5s ease';
-                    onlineMsg.style.opacity = '0';
-                    setTimeout(() => {
-                        if (onlineMsg && onlineMsg.parentNode) {
-                            onlineMsg.parentNode.removeChild(onlineMsg);
-                        }
-                    }, 500);
-                }
-            }
-            // ========== END OFFLINE NOTIFICATION CODE ==========
-            
-            // PWA Install Logic
-            function isIOS() {
-                return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
-                       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-            }
-            
+        }
+        
+        // ========== PWA INSTALLATION SYSTEM ==========
+        function setupPWAInstallation() {
             const installButton = document.getElementById('installButton');
             
-            // Always show the button
-            installButton.style.display = 'flex';
-            
-            // Hide if already installed
-            if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+            // Check if already installed
+            if (isPWAInstalled()) {
                 installButton.style.display = 'none';
+                return;
             }
             
-            // For Android
+            // Show install button after 3 seconds
+            setTimeout(() => {
+                installButton.style.display = 'flex';
+            }, 3000);
+            
+            // Listen for beforeinstallprompt event
             window.addEventListener('beforeinstallprompt', (e) => {
+                console.log('beforeinstallprompt event fired');
                 e.preventDefault();
                 deferredPrompt = e;
+                installButton.style.display = 'flex';
+                
+                // Show notification that app can be installed
+                showInstallNotification();
             });
             
-            // Click handler for install button
-            installButton.addEventListener('click', () => {
+            // Listen for app installed event
+            window.addEventListener('appinstalled', () => {
+                console.log('PWA was installed');
+                installButton.style.display = 'none';
+                deferredPrompt = null;
+                showThankYouNotification();
+            });
+            
+            // Install button click handler
+            installButton.addEventListener('click', async () => {
+                console.log('Install button clicked');
+                
                 if (deferredPrompt) {
-                    // Android native prompt
+                    // Android/Chrome - Show native install prompt
+                    console.log('Showing native install prompt');
                     deferredPrompt.prompt();
-                    deferredPrompt.userChoice.then((choice) => {
-                        if (choice.outcome === 'accepted') {
-                            installButton.style.display = 'none';
-                        }
-                        deferredPrompt = null;
-                    });
-                } else if (isIOS()) {
-                    // iOS instructions modal
-                    document.getElementById('iosInstallModal').style.display = 'flex';
+                    const { outcome } = await deferredPrompt.userChoice;
+                    
+                    if (outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                        installButton.style.display = 'none';
+                    } else {
+                        console.log('User dismissed the install prompt');
+                        showManualInstallInstructions();
+                    }
+                    deferredPrompt = null;
                 } else {
-                    alert('From the Share menu, select "Add to Home Screen" to install.');
+                    // Show manual install instructions
+                    console.log('Showing manual install instructions');
+                    showManualInstallInstructions();
                 }
             });
+        }
+        
+        function isPWAInstalled() {
+            return window.matchMedia('(display-mode: standalone)').matches || 
+                   window.navigator.standalone === true ||
+                   ('standalone' in window.navigator && window.navigator.standalone);
+        }
+        
+        function showInstallNotification() {
+            // Create a subtle notification that app can be installed
+            const notification = document.createElement('div');
+            notification.innerHTML = `
+                <div style="
+                    position: fixed;
+                    bottom: 140px;
+                    right: 20px;
+                    background: #4CAF50;
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 25px;
+                    font-size: 14px;
+                    font-weight: bold;
+                    z-index: 1003;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                    animation: slideUp 0.5s ease-out;
+                ">
+                    <i class="fas fa-download"></i> App can be installed!
+                </div>
+            `;
+            notification.id = 'install-notification';
+            document.body.appendChild(notification);
             
-            // Service Worker Registration
+            // Remove after 5 seconds
+            setTimeout(() => {
+                const notif = document.getElementById('install-notification');
+                if (notif) notif.remove();
+            }, 5000);
+        }
+        
+        function showThankYouNotification() {
+            const notification = document.createElement('div');
+            notification.innerHTML = `
+                <div style="
+                    position: fixed;
+                    bottom: 140px;
+                    right: 20px;
+                    background: #4CAF50;
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 25px;
+                    font-size: 14px;
+                    font-weight: bold;
+                    z-index: 1003;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                    animation: slideUp 0.5s ease-out;
+                ">
+                    <i class="fas fa-check-circle"></i> App installed successfully!
+                </div>
+            `;
+            notification.id = 'thank-you-notification';
+            document.body.appendChild(notification);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                const notif = document.getElementById('thank-you-notification');
+                if (notif) notif.remove();
+            }, 5000);
+        }
+        
+        function showManualInstallInstructions() {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isAndroid = /Android/.test(navigator.userAgent);
+            const isChrome = /Chrome/.test(navigator.userAgent) || /CriOS/.test(navigator.userAgent);
+            
+            // Show appropriate instructions
+            if (isIOS) {
+                document.getElementById('safariInstructions').style.display = 'block';
+                document.getElementById('chromeInstructions').style.display = 'none';
+            } else if (isAndroid && isChrome) {
+                document.getElementById('safariInstructions').style.display = 'none';
+                document.getElementById('chromeInstructions').style.display = 'block';
+            }
+            
+            // Show the modal
+            document.getElementById('installInstructions').style.display = 'flex';
+        }
+        
+        // ========== SERVICE WORKER REGISTRATION ==========
+        function registerServiceWorker() {
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register('sw.js')
                         .then(registration => {
                             console.log('Service Worker registered with scope:', registration.scope);
+                            
+                            // Check for updates every hour
+                            setInterval(() => {
+                                registration.update();
+                            }, 60 * 60 * 1000);
                         })
                         .catch(error => {
                             console.log('Service Worker registration failed:', error);
                         });
                 });
             }
-            
-            // Prevent drag and drop
-            document.addEventListener('dragstart', e => e.preventDefault());
-            document.addEventListener('drop', e => e.preventDefault());
-            
-            // Prevent right-click
-            document.addEventListener('contextmenu', e => {
-                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-                    e.preventDefault();
-                }
-            });
-            
-            // Save data to localStorage for offline use
-            function saveDataToLocal() {
-                const dataToSave = {
-                    date: new Date().toISOString(),
-                    speciesData: [
-                        { name: 'Lemur', male: 3, female: 4, unknown: 0, total: 7 },
-                        { name: 'Squirrel Monkey', male: 4, female: 4, unknown: 0, total: 8 },
-                        { name: 'Baboon', male: 2, female: 3, unknown: 0, total: 5 },
-                        { name: 'Vervets', male: 4, female: 7, unknown: 1, total: 12 },
-                        { name: 'Rhesus', male: 3, female: 4, unknown: 0, total: 7 },
-                        { name: 'Rhesus (Single)', male: 0, female: 1, unknown: 0, total: 1 },
-                        { name: 'Mona', male: 0, female: 1, unknown: 0, total: 1 },
-                        { name: 'Chimpanzee (Big)', male: 1, female: 0, unknown: 0, total: 1 },
-                        { name: 'Chimpanzee (Small)', male: 3, female: 1, unknown: 0, total: 4 }
-                    ],
-                    stats: {
-                        totalSpecies: 7,
-                        totalMonkeys: 46,
-                        malePopulation: 20,
-                        femalePopulation: 25,
-                        unknownGender: 1,
-                        chimpanzees: 5
-                    }
-                };
-                
-                localStorage.setItem('kuwaitZooData', JSON.stringify(dataToSave));
-                console.log('Data saved locally for offline use');
-            }
-            
-            // Load data from localStorage
-            function loadDataFromLocal() {
-                const savedData = localStorage.getItem('kuwaitZooData');
-                if (savedData) {
-                    console.log('Loaded data from local storage');
-                    return JSON.parse(savedData);
-                }
-                return null;
-            }
-            
-            // Initialize data
-            saveDataToLocal();
-            
-            // Load offline data if needed
-            if (!navigator.onLine) {
-                const offlineData = loadDataFromLocal();
-                if (offlineData) {
-                    console.log('Running with offline data');
-                }
-            }
-        });
+        }
         
+        // ========== OFFLINE DATA STORAGE ==========
+        function saveDataToLocal() {
+            const dataToSave = {
+                date: new Date().toISOString(),
+                speciesData: [
+                    { name: 'Lemur', male: 3, female: 4, unknown: 0, total: 7 },
+                    { name: 'Squirrel Monkey', male: 4, female: 4, unknown: 0, total: 8 },
+                    { name: 'Baboon', male: 2, female: 3, unknown: 0, total: 5 },
+                    { name: 'Vervets', male: 4, female: 7, unknown: 1, total: 12 },
+                    { name: 'Rhesus', male: 3, female: 4, unknown: 0, total: 7 },
+                    { name: 'Rhesus (Single)', male: 0, female: 1, unknown: 0, total: 1 },
+                    { name: 'Mona', male: 0, female: 1, unknown: 0, total: 1 },
+                    { name: 'Chimpanzee (Big)', male: 1, female: 0, unknown: 0, total: 1 },
+                    { name: 'Chimpanzee (Small)', male: 3, female: 1, unknown: 0, total: 4 }
+                ],
+                stats: {
+                    totalSpecies: 7,
+                    totalMonkeys: 46,
+                    malePopulation: 20,
+                    femalePopulation: 25,
+                    unknownGender: 1,
+                    chimpanzees: 5
+                }
+            };
+            
+            localStorage.setItem('kuwaitZooData', JSON.stringify(dataToSave));
+            console.log('Data saved to localStorage for offline use');
+        }
+        
+        function loadDataFromLocal() {
+            const savedData = localStorage.getItem('kuwaitZooData');
+            if (savedData) {
+                console.log('Loaded data from localStorage');
+                return JSON.parse(savedData);
+            }
+            return null;
+        }
+        
+        // ========== VIDEO FUNCTIONS ==========
         function loadVideo(index) {
             const iframe = document.getElementById('youtubeIframe');
             const loading = document.getElementById('videoLoading');
@@ -1533,6 +1767,7 @@
                 '<i class="fas fa-volume-up"></i> Sound On';
         }
         
+        // ========== UTILITY FUNCTIONS ==========
         function showReadOnlyMessage() {
             alert('This is a read-only public view.\n\nPlease login as administrator to edit content.');
         }
@@ -1540,6 +1775,24 @@
         function showVisitorInfo() {
             alert('👥 VISITOR INFORMATION\n\n🕒 Permanently Closed');
         }
+        
+        // Check for updates every 24 hours
+        setInterval(() => {
+            if (navigator.onLine) {
+                fetch(window.location.href, { cache: 'no-store' })
+                    .then(response => {
+                        const currentVersion = localStorage.getItem('appVersion') || '1.0.0';
+                        const newVersion = response.headers.get('X-App-Version') || currentVersion;
+                        
+                        if (newVersion !== currentVersion) {
+                            localStorage.setItem('appVersion', newVersion);
+                            console.log('New version available:', newVersion);
+                            // You could show an update notification here
+                        }
+                    })
+                    .catch(error => console.log('Update check failed:', error));
+            }
+        }, 24 * 60 * 60 * 1000);
     </script>
 </body>
 </html>
