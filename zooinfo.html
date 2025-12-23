@@ -1,0 +1,1986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuwait Zoo - Monkey Population 2025</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- =========================================== -->
+    <!-- ADMIN PROTECTION SCRIPT (Added at beginning) -->
+    <!-- =========================================== -->
+    <script>
+    // Admin Access Check
+    (function() {
+        // Check if admin is logged in
+        const adminSession = localStorage.getItem('kuwait_zoo_admin');
+        
+        if (!adminSession) {
+            // Not logged in, redirect to login
+            window.location.href = 'admin-login.html';
+            return;
+        }
+        
+        try {
+            const session = JSON.parse(adminSession);
+            const sessionAge = Date.now() - session.timestamp;
+            const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+            
+            if (sessionAge > maxAge) {
+                localStorage.removeItem('kuwait_zoo_admin');
+                alert('Session expired. Please login again.');
+                window.location.href = 'admin-login.html';
+                return;
+            }
+            
+            // Valid admin session - continue loading page
+            console.log('Admin access granted for:', session.username);
+            
+        } catch (error) {
+            localStorage.removeItem('kuwait_zoo_admin');
+            window.location.href = 'admin-login.html';
+        }
+    })();
+    </script>
+    
+    <style>
+        /* =========================================== */
+        /* ADMIN HEADER STYLES (Added at beginning) */
+        /* =========================================== */
+        #adminHeader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+            color: white;
+            padding: 10px 20px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 9999;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .admin-header-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .admin-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .admin-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .admin-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        .admin-btn.save {
+            background: rgba(46, 139, 87, 0.8);
+        }
+        
+        .admin-btn.logout {
+            background: rgba(220, 53, 69, 0.8);
+        }
+        
+        /* Adjust body padding for admin header */
+        body.admin-mode {
+            padding-top: 50px !important;
+        }
+        
+        /* =========================================== */
+        /* YOUR ORIGINAL CSS STARTS HERE */
+        /* =========================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.4;
+            display: flex;
+            min-height: 100vh;
+            padding: 0;
+        }
+        
+        /* Side Panel */
+        .side-panel {
+            width: 280px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+            height: 100vh;
+            overflow-y: auto;
+            position: fixed;
+            left: 0;
+            top: 50px; /* Adjusted for admin header */
+        }
+        
+        .panel-header {
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #2e8b57;
+            margin-bottom: 10px;
+        }
+        
+        .panel-header h2 {
+            color: #2e8b57;
+            font-size: 18px;
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        .control-group h3 {
+            color: #2e8b57;
+            font-size: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .control-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #1a6d38 0%, #2e8b57 100%);
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            margin-bottom: 8px;
+        }
+        
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .control-btn.secondary {
+            background: linear-gradient(135deg, #6d6d6d 0%, #8b8b8b 100%);
+        }
+        
+        .control-btn.edit-mode {
+            background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
+        }
+        
+        .control-btn.edit-active {
+            background: linear-gradient(135deg, #4caf50 0%, #2e8b57 100%);
+        }
+        
+        .size-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .size-btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            padding: 8px 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .size-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .size-btn.active {
+            background: linear-gradient(135deg, #2e8b57 0%, #1a6d38 100%);
+        }
+        
+        /* Main Content Area */
+        .main-content-area {
+            flex: 1;
+            margin-left: 280px;
+            margin-top: 50px; /* Adjusted for admin header */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        
+        /* A4 Size Container */
+        .a4-container {
+            width: 21cm;
+            height: 29.7cm;
+            background: white;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.15);
+            padding: 1.5cm;
+            position: relative;
+            transition: all 0.3s ease;
+            transform-origin: center center;
+        }
+        
+        /* Size Variations */
+        .a4-container.small {
+            transform: scale(0.7);
+            margin: -100px 0;
+        }
+        
+        .a4-container.medium {
+            transform: scale(0.85);
+            margin: -50px 0;
+        }
+        
+        .a4-container.large {
+            transform: scale(1);
+            margin: 0;
+        }
+        
+        /* Document Styles */
+        header {
+            background: linear-gradient(135deg, #1a6d38 0%, #2e8b57 100%);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .header-content h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .header-content p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .date-badge {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            display: inline-block;
+            margin-top: 8px;
+        }
+        
+        .document-content {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 20px;
+            height: calc(100% - 120px);
+        }
+        
+        .card {
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 18px;
+            border: 1px solid #eaeaea;
+        }
+        
+        .card h2 {
+            color: #2e8b57;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eaeaea;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .card h2 i {
+            color: #2e8b57;
+            font-size: 16px;
+        }
+        
+        /* Table Styles */
+        .table-editable {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        
+        /* Species Name (বড় কলাম) */
+        .table-editable th:nth-child(1),
+        .table-editable td:nth-child(1) {
+            width: 30%;
+            text-align: left;
+        }
+        
+        /* Male (ছোট কলাম) */
+        .table-editable th:nth-child(2),
+        .table-editable td:nth-child(2) {
+            width: 13%;
+            text-align: center;
+        }
+        
+        /* Female (ছোট কলাম) */
+        .table-editable th:nth-child(3),
+        .table-editable td:nth-child(3) {
+            width: 13%;
+            text-align: center;
+        }
+        
+        /* Gender Unknown (সবচেয়ে বড় কলাম) */
+        .table-editable th:nth-child(4),
+        .table-editable td:nth-child(4) {
+            width: 20%;
+            text-align: center;
+        }
+        
+        /* Total (ছোট কলাম) */
+        .table-editable th:nth-child(5),
+        .table-editable td:nth-child(5) {
+            width: 14%;
+            text-align: center;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            color: #2e8b57;
+            text-align: left;
+            padding: 10px 8px;
+            font-weight: 600;
+            border-bottom: 2px solid #eaeaea;
+            font-size: 12px;
+        }
+        
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #eaeaea;
+            font-size: 12px;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .species-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .emoji {
+            font-size: 16px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #eaeaea;
+        }
+        
+        .stat-card h3 {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2e8b57;
+        }
+        
+        .note {
+            background-color: #fff9e6;
+            border-left: 3px solid #ffc107;
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 0 4px 4px 0;
+            font-size: 12px;
+        }
+        
+        .note i {
+            color: #ff9800;
+            margin-right: 6px;
+        }
+        
+        footer {
+            position: absolute;
+            bottom: 1.5cm;
+            left: 1.5cm;
+            right: 1.5cm;
+            text-align: center;
+            padding-top: 15px;
+            color: #666;
+            font-size: 12px;
+            border-top: 1px solid #eaeaea;
+        }
+        
+        .zoo-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+            justify-content: center;
+        }
+        
+        .zoo-logo i {
+            color: #2e8b57;
+            font-size: 16px;
+        }
+        
+        /* Editable Content Styles */
+        .editable {
+            cursor: text;
+            padding: 2px 4px;
+            border-radius: 3px;
+            transition: background-color 0.2s;
+        }
+        
+        .editable:hover {
+            background-color: rgba(46, 139, 87, 0.1);
+        }
+        
+        .editable:focus {
+            background-color: rgba(46, 139, 87, 0.15);
+            outline: 2px solid #2e8b57;
+        }
+        
+        .table-editable td:not(:first-child) {
+            cursor: text;
+            padding: 8px 6px;
+        }
+        
+        .table-editable td:not(:first-child):hover {
+            background-color: rgba(46, 139, 87, 0.05);
+        }
+        
+        .table-editable td:not(:first-child):focus {
+            background-color: rgba(46, 139, 87, 0.1);
+            outline: 1px solid #2e8b57;
+        }
+        
+        /* Edit Status Bar */
+        .edit-status {
+            position: fixed;
+            bottom: 20px;
+            left: 300px;
+            right: 20px;
+            background: #2e8b57;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+        }
+        
+        .edit-status.active {
+            display: flex;
+        }
+        
+        .edit-status-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .status-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .status-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Image History Styles */
+        .image-history {
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #eaeaea;
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 10px;
+            background: #f9f9f9;
+        }
+        
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 11px;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-name {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .history-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .history-btn {
+            background: #2e8b57;
+            color: white;
+            border: none;
+            padding: 2px 6px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 10px;
+        }
+        
+        .history-btn.edit {
+            background: #ff9800;
+        }
+        
+        /* Additional Table Designs */
+        .table-design-1 {
+            background-color: #f8f9fa;
+            border: 1px solid #2e8b57;
+            border-radius: 6px;
+        }
+        
+        .table-design-1 th {
+            background: linear-gradient(135deg, #2e8b57 0%, #1a6d38 100%);
+            color: white;
+        }
+        
+        .table-design-2 {
+            background-color: #e6f3ff;
+            border: 1px solid #3498db;
+            border-radius: 12px;
+        }
+        
+        .table-design-2 th {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .table-design-3 {
+            background-color: #fff5e6;
+            border: 1px solid #ff9800;
+            border-radius: 4px;
+        }
+        
+        .table-design-3 th {
+            background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
+            color: white;
+            font-weight: 800;
+        }
+        
+        /* Background Color Options for Download */
+        .bg-light {
+            background-color: #f5f7fa !important;
+        }
+        
+        .bg-white {
+            background-color: #ffffff !important;
+        }
+        
+        .bg-blue {
+            background-color: #e6f3ff !important;
+        }
+        
+        .bg-cream {
+            background-color: #fff5e6 !important;
+        }
+        
+        /* Table Selection Styles */
+        .table-select-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .table-select-btn {
+            background: linear-gradient(135deg, #555 0%, #333 100%);
+            color: white;
+            border: none;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .table-select-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .table-select-btn.active {
+            background: linear-gradient(135deg, #2e8b57 0%, #1a6d38 100%);
+        }
+        
+        /* Background Color Selection Styles */
+        .bg-select-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .bg-select-btn {
+            background: linear-gradient(135deg, #555 0%, #333 100%);
+            color: white;
+            border: none;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .bg-select-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .bg-select-btn.active {
+            background: linear-gradient(135deg, #2e8b57 0%, #1a6d38 100%);
+        }
+        
+        /* Hide inactive tables */
+        .a4-container .table-wrapper {
+            display: none;
+        }
+        
+        .a4-container .table-wrapper.active {
+            display: block;
+        }
+        
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: flex-start;
+            }
+            
+            #adminHeader {
+                display: none !important;
+            }
+            
+            .side-panel {
+                display: none;
+            }
+            
+            .main-content-area {
+                margin: 0 !important;
+                padding: 0 !important;
+                display: flex;
+                justify-content: center;
+                align-items: flex-start;
+                width: 100%;
+                height: 100%;
+            }
+            
+            .a4-container {
+                box-shadow: none;
+                padding: 1.5cm !important;
+                width: 21cm !important;
+                height: 29.7cm !important;
+                margin: 0 auto !important;
+                transform: none !important;
+                transform-origin: center !important;
+                overflow: hidden;
+                page-break-after: always;
+                box-sizing: border-box;
+                position: relative;
+                left: 0;
+                right: 0;
+                background-color: white !important;
+            }
+            
+            .a4-container.bg-light {
+                background-color: #f5f7fa !important;
+            }
+            
+            .a4-container.bg-white {
+                background-color: #ffffff !important;
+            }
+            
+            .a4-container.bg-blue {
+                background-color: #e6f3ff !important;
+            }
+            
+            .a4-container.bg-cream {
+                background-color: #fff5e6 !important;
+            }
+            
+            .content-wrapper {
+                width: 100%;
+                height: 100%;
+                margin: 0 auto;
+                overflow: hidden;
+            }
+            
+            .document-content {
+                display: grid;
+                grid-template-columns: 1.5fr 1fr;
+                gap: 20px;
+                width: 100%;
+                max-width: 18cm;
+                margin: 0 auto;
+                height: calc(100% - 120px);
+            }
+            
+            .table-wrapper {
+                width: 100%;
+                max-width: 10.8cm;
+                margin: 0 auto;
+                display: none !important;
+            }
+            
+            .table-wrapper.active {
+                display: block !important;
+            }
+            
+            .table-editable {
+                width: 100%;
+                table-layout: fixed;
+                font-size: 12px;
+            }
+            
+            .table-editable th,
+            .table-editable td {
+                padding: 10px 8px;
+            }
+            
+            .table-editable th:nth-child(1),
+            .table-editable td:nth-child(1) {
+                width: 32%;
+                text-align: left;
+            }
+            
+            .table-editable th:nth-child(2),
+            .table-editable td:nth-child(2) {
+                width: 14%;
+                text-align: center;
+            }
+            
+            .table-editable th:nth-child(3),
+            .table-editable td:nth-child(3) {
+                width: 14%;
+                text-align: center;
+            }
+            
+            .table-editable th:nth-child(4),
+            .table-editable td:nth-child(4) {
+                width: 14%;
+                text-align: center;
+            }
+            
+            .table-editable th:nth-child(5),
+            .table-editable td:nth-child(5) {
+                width: 14%;
+                text-align: center;
+            }
+            
+            .table-editable th:nth-child(6),
+            .table-editable td:nth-child(6) {
+                width: 12%;
+                text-align: center;
+            }
+            
+            header {
+                padding: 20px 25px;
+                margin-bottom: 20px;
+            }
+            
+            .header-content h1 {
+                font-size: 24px;
+            }
+            
+            .header-content p {
+                font-size: 14px;
+            }
+            
+            .card {
+                padding: 18px;
+            }
+            
+            .card h2 {
+                font-size: 18px;
+            }
+            
+            footer {
+                bottom: 1.5cm;
+                padding-top: 15px;
+                font-size: 12px;
+            }
+            
+            .edit-status {
+                display: none !important;
+            }
+            
+            .editable {
+                cursor: default;
+            }
+            
+            .editable:hover,
+            .editable:focus {
+                background-color: transparent;
+                outline: none;
+            }
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .side-panel {
+                width: 250px;
+            }
+            
+            .main-content-area {
+                margin-left: 250px;
+            }
+            
+            .edit-status {
+                left: 270px;
+            }
+        }
+        
+        /* Load Project Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50px; /* Adjusted for admin header */
+            left: 0;
+            width: 100%;
+            height: calc(100% - 50px);
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .modal-header h3 {
+            color: #2e8b57;
+            margin: 0;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .project-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        
+        .project-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .project-btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+        
+        .project-btn.load {
+            background: #2e8b57;
+            color: white;
+        }
+        
+        .project-btn.delete {
+            background: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body class="admin-mode">
+    <!-- =========================================== -->
+    <!-- ADMIN HEADER (Added) -->
+    <!-- =========================================== -->
+    <div id="adminHeader">
+        <div class="admin-header-content">
+            <i class="fas fa-user-shield"></i>
+            <span>Admin Mode | Kuwait Zoo Management</span>
+        </div>
+        <div class="admin-buttons">
+            <button class="admin-btn save" onclick="saveAdminWork()">
+                <i class="fas fa-save"></i> Save Work
+            </button>
+            <button class="admin-btn logout" onclick="adminLogout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+    
+    <!-- =========================================== -->
+    <!-- YOUR ORIGINAL HTML CONTENT STARTS HERE -->
+    <!-- =========================================== -->
+    
+    <!-- Side Panel -->
+    <div class="side-panel">
+        <div class="panel-header">
+            <h2><i class="fas fa-cogs"></i> Control Panel</h2>
+            <p style="font-size: 12px; color: #666; margin-top: 5px;">Kuwait Zoo Management</p>
+        </div>
+        
+        <div class="control-group">
+            <h3><i class="fas fa-download"></i> Export Options</h3>
+            <button class="control-btn" onclick="downloadAsImage()">
+                <i class="fas fa-image"></i> Download as Image
+            </button>
+            <button class="control-btn secondary" onclick="window.print()">
+                <i class="fas fa-print"></i> Print Document
+            </button>
+        </div>
+        
+        <div class="control-group">
+            <h3><i class="fas fa-edit"></i> Edit Mode</h3>
+            <button class="control-btn edit-mode" id="editToggleBtn" onclick="toggleEditMode()">
+                <i class="fas fa-edit"></i> Enable Edit Mode
+            </button>
+            <button class="control-btn secondary" onclick="resetToDefault()">
+                <i class="fas fa-redo"></i> Reset to Default
+            </button>
+        </div>
+        
+        <div class="control-group">
+            <h3><i class="fas fa-project-diagram"></i> Project Management</h3>
+            <button class="control-btn" onclick="saveCurrentProject()">
+                <i class="fas fa-save"></i> Save Current Project
+            </button>
+            <button class="control-btn secondary" onclick="showLoadProjectModal()">
+                <i class="fas fa-folder-open"></i> Load Saved Project
+            </button>
+        </div>
+        
+        <div class="control-group">
+            <h3><i class="fas fa-expand-arrows-alt"></i> Document Size</h3>
+            <div class="size-controls">
+                <button class="size-btn active" onclick="changeSize('small')">Small</button>
+                <button class="size-btn" onclick="changeSize('medium')">Medium</button>
+                <button class="size-btn" onclick="changeSize('large')">Large</button>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <h3><i class="fas fa-table"></i> Select Table Design</h3>
+            <div class="table-select-controls">
+                <button class="table-select-btn active" onclick="selectTableDesign('design-1')">Green Design</button>
+                <button class="table-select-btn" onclick="selectTableDesign('design-2')">Blue Design</button>
+                <button class="table-select-btn" onclick="selectTableDesign('design-3')">Orange Design</button>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <h3><i class="fas fa-paint-roller"></i> Background Color</h3>
+            <div class="bg-select-controls">
+                <button class="bg-select-btn active" onclick="selectBackground('light')">Light</button>
+                <button class="bg-select-btn" onclick="selectBackground('white')">White</button>
+                <button class="bg-select-btn" onclick="selectBackground('blue')">Blue</button>
+                <button class="bg-select-btn" onclick="selectBackground('cream')">Cream</button>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <h3><i class="fas fa-history"></i> Saved Images</h3>
+            <div class="image-history" id="imageHistory">
+                <div class="history-item">
+                    <span class="history-name">No saved images yet</span>
+                </div>
+            </div>
+            <button class="control-btn secondary" onclick="clearImageHistory()" style="margin-top: 10px;">
+                <i class="fas fa-trash"></i> Clear History
+            </button>
+        </div>
+        
+        <div class="control-group">
+            <h3><i class="fas fa-info-circle"></i> Instructions</h3>
+            <div style="font-size: 12px; color: #666; line-height: 1.4;">
+                <p>• Click "Enable Edit Mode" to edit content</p>
+                <p>• Click on any text to modify</p>
+                <p>• Use size controls to adjust view</p>
+                <p>• Select table design or background color</p>
+                <p>• Download or Print when done</p>
+                <p>• Save projects to edit later</p>
+                <p>• All downloaded images are saved automatically</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content Area -->
+    <div class="main-content-area">
+        <div class="a4-container medium bg-light" id="capture">
+            <div class="content-wrapper">
+                <header>
+                    <div class="header-content">
+                        <h1 class="editable" contenteditable="false"><i class="fas fa-paw"></i> Kuwait Zoo - Monkeys & Chimpanzees Population</h1>
+                        <p class="editable" contenteditable="false">Comprehensive overview of primate species population</p>
+                        <div class="date-badge">
+                            <i class="far fa-calendar-alt"></i>
+                            <span class="editable" contenteditable="false">December 2025</span>
+                        </div>
+                    </div>
+                </header>
+                
+                <div class="document-content">
+                    <div class="card">
+                        <h2><i class="fas fa-list-ul"></i> Species Population Overview</h2>
+                        
+                        <!-- Table Design 1 (Green Theme) -->
+                        <div class="table-wrapper table-design-1 active" data-design="design-1">
+                            <table class="table-editable">
+                                <thead>
+                                    <tr>
+                                        <th>Species Name</th>
+                                        <th>Male</th>
+                                        <th>Female</th>
+                                        <th>Gender Unknown</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🐒</span>
+                                                <strong class="editable" contenteditable="false">Lemur</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">3</td>
+                                        <td class="editable" contenteditable="false">4</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">7</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🐵</span>
+                                                <strong class="editable" contenteditable="false">Squirrel Monkey</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">4</td>
+                                        <td class="editable" contenteditable="false">4</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">8</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🐒</span>
+                                                <strong class="editable" contenteditable="false">Baboon</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">2</td>
+                                        <td class="editable" contenteditable="false">3</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">5</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🐒</span>
+                                                <strong class="editable" contenteditable="false">Vervets</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">4</td>
+                                        <td class="editable" contenteditable="false">7</td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                        <td class="editable" contenteditable="false">12</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🐒</span>
+                                                <strong class="editable" contenteditable="false">Rhesus</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">3</td>
+                                        <td class="editable" contenteditable="false">4</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">7</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🐒</span>
+                                                <strong class="editable" contenteditable="false">Rhesus (Single)</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🐒</span>
+                                                <strong class="editable" contenteditable="false">Mona</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🦍</span>
+                                                <strong class="editable" contenteditable="false">Chimpanzee (Big)</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🦧</span>
+                                                <strong class="editable" contenteditable="false">Chimpanzee (Small)</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">3</td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">4</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Table Design 2 (Blue Theme) -->
+                        <div class="table-wrapper table-design-2" data-design="design-2">
+                            <table class="table-editable">
+                                <thead>
+                                    <tr>
+                                        <th>Species Name</th>
+                                        <th>Male</th>
+                                        <th>Female</th>
+                                        <th>Gender Unknown</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🐒</span>
+                                                <strong class="editable" contenteditable="false">Lemur</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">3</td>
+                                        <td class="editable" contenteditable="false">4</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">7</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🐵</span>
+                                                <strong class="editable" contenteditable="false">Squirrel Monkey</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">4</td>
+                                        <td class="editable" contenteditable="false">4</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">8</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🐒</span>
+                                                <strong class="editable" contenteditable="false">Baboon</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">2</td>
+                                        <td class="editable" contenteditable="false">3</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">5</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🐒</span>
+                                                <strong class="editable" contenteditable="false">Vervets</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">4</td>
+                                        <td class="editable" contenteditable="false">7</td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                        <td class="editable" contenteditable="false">12</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🐒</span>
+                                                <strong class="editable" contenteditable="false">Rhesus</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">3</td>
+                                        <td class="editable" contenteditable="false">4</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">7</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🐒</span>
+                                                <strong class="editable" contenteditable="false">Rhesus (Single)</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🐒</span>
+                                                <strong class="editable" contenteditable="false">Mona</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🦍</span>
+                                                <strong class="editable" contenteditable="false">Chimpanzee (Big)</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🦧</span>
+                                                <strong class="editable" contenteditable="false">Chimpanzee (Small)</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">3</td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">4</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Table Design 3 (Orange Theme) -->
+                        <div class="table-wrapper table-design-3" data-design="design-3">
+                            <table class="table-editable">
+                                <thead>
+                                    <tr>
+                                        <th>Species Name</th>
+                                        <th>Male</th>
+                                        <th>Female</th>
+                                        <th>Gender Unknown</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🐒</span>
+                                                <strong class="editable" contenteditable="false">Lemur</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">3</td>
+                                        <td class="editable" contenteditable="false">4</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">7</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🐵</span>
+                                                <strong class="editable" contenteditable="false">Squirrel Monkey</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">4</td>
+                                        <td class="editable" contenteditable="false">4</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">8</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🦍</span>
+                                                <strong class="editable" contenteditable="false">Baboon</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">2</td>
+                                        <td class="editable" contenteditable="false">3</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">5</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🐒</span>
+                                                <strong class="editable" contenteditable="false">Vervets</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">4</td>
+                                        <td class="editable" contenteditable="false">7</td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                        <td class="editable" contenteditable="false">12</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🐒</span>
+                                                <strong class="editable" contenteditable="false">Rhesus</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">3</td>
+                                        <td class="editable" contenteditable="false">4</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">7</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🐒</span>
+                                                <strong class="editable" contenteditable="false">Rhesus (Single)</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🐒</span>
+                                                <strong class="editable" contenteditable="false">Mona</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🦍</span>
+                                                <strong class="editable" contenteditable="false">Chimpanzee (Big)</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="species-name">
+                                                <span class="emoji">🦧</span>
+                                                <strong class="editable" contenteditable="false">Chimpanzee (Small)</strong>
+                                            </div>
+                                        </td>
+                                        <td class="editable" contenteditable="false">3</td>
+                                        <td class="editable" contenteditable="false">1</td>
+                                        <td class="editable" contenteditable="false">0</td>
+                                        <td class="editable" contenteditable="false">4</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="note">
+                            <p><i class="fas fa-info-circle"></i> <strong>Note:</strong> <span class="editable" contenteditable="false">Vervet includes one baby (Gender unknown).</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h2><i class="fas fa-chart-bar"></i> Population Statistics</h2>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <h3>Species</h3>
+                                <div class="stat-value editable" contenteditable="false">7</div>
+                            </div>
+                            <div class="stat-card">
+                                <h3>Total Monkeys</h3>
+                                <div class="stat-value editable" contenteditable="false">46</div>
+                            </div>
+                            <div class="stat-card">
+                                <h3>Male Population</h3>
+                                <div class="stat-value editable" contenteditable="false">20</div>
+                            </div>
+                            <div class="stat-card">
+                                <h3>Female Population</h3>
+                                <div class="stat-value editable" contenteditable="false">25</div>
+                            </div>
+                            <div class="stat-card">
+                                <h3>Unknown Gender</h3>
+                                <div class="stat-value editable" contenteditable="false">1</div>
+                            </div>
+                            <div class="stat-card">
+                                <h3>Chimpanzees</h3>
+                                <div class="stat-value editable" contenteditable="false">5</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 20px; padding: 12px; background: #f8f9fa; border-radius: 6px;">
+                            <h3 style="color: #2e8b57; margin-bottom: 8px; font-size: 14px;">
+                                <i class="fas fa-chart-pie"></i> Population Summary
+                            </h3>
+                            <p style="font-size: 12px; line-height: 1.5;" class="editable" contenteditable="false">
+                                The Kuwait Zoo currently houses <strong>7 species</strong> of primates with a total population of <strong>46 monkeys</strong>. The gender distribution shows <strong>20 males</strong>, <strong>25 females</strong>, and <strong>1</strong> of unknown gender.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <footer>
+                    <div class="zoo-logo">
+                        <i class="fas fa-tree"></i>
+                        <h3 class="editable" contenteditable="false">Kuwait Zoo Management System</h3>
+                    </div>
+                    <p class="editable" contenteditable="false">Prepared on December 2025 | Official Document</p>
+                </footer>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Status Bar -->
+    <div class="edit-status" id="editStatus">
+        <div>
+            <i class="fas fa-edit"></i>
+            <strong>Edit Mode Active</strong> - Click on any text to edit content
+        </div>
+        <div class="edit-status-buttons">
+            <button class="status-btn" onclick="saveChanges()">
+                <i class="fas fa-save"></i> Save
+            </button>
+            <button class="status-btn" onclick="toggleEditMode()">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+        </div>
+    </div>
+    
+    <!-- Load Project Modal -->
+    <div class="modal" id="loadProjectModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-folder-open"></i> Load Saved Project</h3>
+                <button class="close-modal" onclick="closeLoadProjectModal()">&times;</button>
+            </div>
+            <div id="projectList">
+                <!-- Project items will be loaded here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- =========================================== -->
+    <!-- YOUR ORIGINAL JAVASCRIPT + ADMIN FUNCTIONS -->
+    <!-- =========================================== -->
+    <script>
+        // ===========================================
+        // ADMIN FUNCTIONS (Added)
+        // ===========================================
+        function saveAdminWork() {
+            alert('✅ Admin work saved successfully!');
+            // Add your save logic here
+        }
+        
+        function adminLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('kuwait_zoo_admin');
+                window.location.href = 'index.html';
+            }
+        }
+        
+        // Auto-save every 5 minutes
+        setInterval(() => {
+            const adminSession = localStorage.getItem('kuwait_zoo_admin');
+            if (adminSession) {
+                console.log('Auto-saving admin work...');
+                // Add auto-save logic here
+            }
+        }, 5 * 60 * 1000);
+        
+        // ===========================================
+        // YOUR ORIGINAL JAVASCRIPT FUNCTIONS
+        // ===========================================
+        let editMode = false;
+        let originalContent = {};
+        
+        // Save original content when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const editables = document.querySelectorAll('.editable');
+            editables.forEach((el, index) => {
+                originalContent[index] = el.innerHTML;
+            });
+            loadImageHistory();
+        });
+        
+        function changeSize(size) {
+            const container = document.querySelector('.a4-container');
+            const sizeBtns = document.querySelectorAll('.size-btn');
+            container.classList.remove('small', 'medium', 'large');
+            container.classList.add(size);
+            sizeBtns.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase() === size) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+        
+        function toggleEditMode() {
+            editMode = !editMode;
+            const editables = document.querySelectorAll('.editable');
+            const editButton = document.getElementById('editToggleBtn');
+            const editStatus = document.getElementById('editStatus');
+            
+            if (editMode) {
+                editables.forEach(el => {
+                    el.setAttribute('contenteditable', 'true');
+                });
+                editButton.innerHTML = '<i class="fas fa-check"></i> Edit Mode Active';
+                editButton.classList.add('edit-active');
+                editStatus.classList.add('active');
+            } else {
+                editables.forEach(el => {
+                    el.setAttribute('contenteditable', 'false');
+                });
+                editButton.innerHTML = '<i class="fas fa-edit"></i> Enable Edit Mode';
+                editButton.classList.remove('edit-active');
+                editStatus.classList.remove('active');
+            }
+        }
+        
+        function saveChanges() {
+            alert('Changes saved successfully!');
+            toggleEditMode();
+        }
+        
+        function downloadAsImage() {
+            const element = document.getElementById('capture');
+            const downloadBtns = document.querySelectorAll('.control-btn');
+            const currentSize = document.querySelector('.a4-container').classList[1] || 'large';
+            
+            downloadBtns.forEach(btn => {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            });
+            
+            const container = document.querySelector('.a4-container');
+            const originalSize = container.classList[1];
+            const originalBg = container.classList.contains('bg-light') ? 'bg-light' : 
+                              container.classList.contains('bg-white') ? 'bg-white' :
+                              container.classList.contains('bg-blue') ? 'bg-blue' :
+                              container.classList.contains('bg-cream') ? 'bg-cream' : 'bg-light';
+            
+            container.classList.remove('small', 'medium', 'large');
+            container.classList.add('large');
+            
+            void container.offsetWidth;
+            
+            html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: selectedBackground === 'light' ? '#f5f7fa' :
+                               selectedBackground === 'white' ? '#ffffff' :
+                               selectedBackground === 'blue' ? '#e6f3ff' :
+                               selectedBackground === 'cream' ? '#fff5e6' : '#f5f7fa',
+                width: element.scrollWidth,
+                height: element.scrollHeight,
+                onclone: function(clonedDoc) {
+                    const clonedContainer = clonedDoc.querySelector('.a4-container');
+                    clonedContainer.classList.remove('small', 'medium', 'large');
+                    clonedContainer.classList.add('large');
+                    clonedContainer.classList.remove('bg-light', 'bg-white', 'bg-blue', 'bg-cream');
+                    clonedContainer.classList.add(`bg-${selectedBackground}`);
+                    clonedContainer.style.margin = '0';
+                    clonedContainer.style.transform = 'scale(1)';
+                }
+            }).then(canvas => {
+                const image = canvas.toDataURL('image/png', 1.0);
+                const now = new Date();
+                const timestamp = now.toISOString().replace(/[:.]/g, '-').slice(0, -5);
+                const filename = `Kuwait_Zoo_Monkey_Population_${timestamp}.png`;
+                const link = document.createElement('a');
+                link.href = image;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                saveToImageHistory(filename, image);
+                
+                container.classList.remove('small', 'medium', 'large');
+                container.classList.add(originalSize || 'medium');
+                container.classList.remove('bg-light', 'bg-white', 'bg-blue', 'bg-cream');
+                container.classList.add(originalBg);
+                
+                downloadBtns.forEach(btn => {
+                    btn.disabled = false;
+                    if (btn.classList.contains('edit-mode') || btn.classList.contains('edit-active')) {
+                        btn.innerHTML = '<i class="fas fa-edit"></i> ' + (editMode ? 'Edit Mode Active' : 'Enable Edit Mode');
+                    } else if (btn.classList.contains('secondary')) {
+                        if (btn.innerHTML.includes('Print')) {
+                            btn.innerHTML = '<i class="fas fa-print"></i> Print Document';
+                        } else if (btn.innerHTML.includes('Reset')) {
+                            btn.innerHTML = '<i class="fas fa-redo"></i> Reset to Default';
+                        } else if (btn.innerHTML.includes('Load')) {
+                            btn.innerHTML = '<i class="fas fa-folder-open"></i> Load Saved Project';
+                        } else if (btn.innerHTML.includes('Clear')) {
+                            btn.innerHTML = '<i class="fas fa-trash"></i> Clear History';
+                        }
+                    } else {
+                        btn.innerHTML = '<i class="fas fa-image"></i> Download as Image';
+                    }
+                });
+            }).catch(error => {
+                console.error('Error generating image:', error);
+                alert('Error generating image. Please try again.');
+                container.classList.remove('small', 'medium', 'large');
+                container.classList.add(originalSize || 'medium');
+                container.classList.remove('bg-light', 'bg-white', 'bg-blue', 'bg-cream');
+                container.classList.add(originalBg);
+                
+                downloadBtns.forEach(btn => {
+                    btn.disabled = false;
+                    if (btn.classList.contains('edit-mode') || btn.classList.contains('edit-active')) {
+                        btn.innerHTML = '<i class="fas fa-edit"></i> ' + (editMode ? 'Edit Mode Active' : 'Enable Edit Mode');
+                    } else if (btn.classList.contains('secondary')) {
+                        if (btn.innerHTML.includes('Print')) {
+                            btn.innerHTML = '<i class="fas fa-print"></i> Print Document';
+                        } else if (btn.innerHTML.includes('Reset')) {
+                            btn.innerHTML = '<i class="fas fa-redo"></i> Reset to Default';
+                        } else if (btn.innerHTML.includes('Load')) {
+                            btn.innerHTML = '<i class="fas fa-folder-open"></i> Load Saved Project';
+                        } else if (btn.innerHTML.includes('Clear')) {
+                            btn.innerHTML = '<i class="fas fa-trash"></i> Clear History';
+                        }
+                    } else {
+                        btn.innerHTML = '<i class="fas fa-image"></i> Download as Image';
+                    }
+                });
+            });
+        }
+        
+        function resetToDefault() {
+            if (confirm('Are you sure you want to reset all content to default?')) {
+                const editables = document.querySelectorAll('.editable');
+                editables.forEach((el, index) => {
+                    el.innerHTML = originalContent[index];
+                });
+                changeSize('medium');
+                selectTableDesign('design-1');
+                selectBackground('light');
+                if (editMode) toggleEditMode();
+            }
+        }
+        
+        function saveToImageHistory(filename, imageData) {
+            let history = JSON.parse(localStorage.getItem('imageHistory') || '[]');
+            const historyItem = {
+                id: Date.now(),
+                filename: filename,
+                imageData: imageData,
+                timestamp: new Date().toLocaleString()
+            };
+            history.unshift(historyItem);
+            if (history.length > 10) {
+                history = history.slice(0, 10);
+            }
+            localStorage.setItem('imageHistory', JSON.stringify(history));
+            loadImageHistory();
+        }
+        
+        function loadImageHistory() {
+            const historyContainer = document.getElementById('imageHistory');
+            const history = JSON.parse(localStorage.getItem('imageHistory') || '[]');
+            if (history.length === 0) {
+                historyContainer.innerHTML = '<div class="history-item"><span class="history-name">No saved images yet</span></div>';
+                return;
+            }
+            historyContainer.innerHTML = '';
+            history.forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <span class="history-name" title="${item.filename}">${item.filename}</span>
+                    <div class="history-actions">
+                        <button class="history-btn" onclick="downloadFromHistory('${item.id}')" title="Download">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="history-btn" onclick="deleteFromHistory('${item.id}')" title="Delete" style="background: #dc3545;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                historyContainer.appendChild(historyItem);
+            });
+        }
+        
+        function downloadFromHistory(id) {
+            const history = JSON.parse(localStorage.getItem('imageHistory') || '[]');
+            const item = history.find(i => i.id == id);
+            if (item) {
+                const link = document.createElement('a');
+                link.href = item.imageData;
+                link.download = item.filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+        
+        function deleteFromHistory(id) {
+            let history = JSON.parse(localStorage.getItem('imageHistory') || '[]');
+            history = history.filter(item => item.id != id);
+            localStorage.setItem('imageHistory', JSON.stringify(history));
+            loadImageHistory();
+        }
+        
+        function clearImageHistory() {
+            if (confirm('Are you sure you want to clear all image history?')) {
+                localStorage.removeItem('imageHistory');
+                loadImageHistory();
+            }
+        }
+        
+        function saveCurrentProject() {
+            const projectData = {
+                id: Date.now(),
+                name: `Project_${new Date().toLocaleString()}`,
+                timestamp: new Date().toLocaleString(),
+                content: {},
+                selectedDesign: document.querySelector('.table-wrapper.active').getAttribute('data-design'),
+                selectedBackground: selectedBackground
+            };
+            
+            const editables = document.querySelectorAll('.editable');
+            editables.forEach((el, index) => {
+                projectData.content[index] = el.innerHTML;
+            });
+            
+            let projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+            projects.unshift(projectData);
+            if (projects.length > 20) {
+                projects = projects.slice(0, 20);
+            }
+            localStorage.setItem('savedProjects', JSON.stringify(projects));
+            alert('Project saved successfully! You can load it later for editing.');
+        }
+        
+        function showLoadProjectModal() {
+            const modal = document.getElementById('loadProjectModal');
+            const projectList = document.getElementById('projectList');
+            const projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+            
+            if (projects.length === 0) {
+                projectList.innerHTML = '<p>No saved projects found.</p>';
+            } else {
+                projectList.innerHTML = '';
+                projects.forEach(project => {
+                    const projectItem = document.createElement('div');
+                    projectItem.className = 'project-item';
+                    projectItem.innerHTML = `
+                        <div>
+                            <strong>${project.name}</strong>
+                            <div style="font-size: 10px; color: #666;">${project.timestamp}</div>
+                        </div>
+                        <div class="project-actions">
+                            <button class="project-btn load" onclick="loadProject(${project.id})">
+                                <i class="fas fa-edit"></i> Load & Edit
+                            </button>
+                            <button class="project-btn delete" onclick="deleteProject(${project.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    projectList.appendChild(projectItem);
+                });
+            }
+            modal.style.display = 'flex';
+        }
+        
+        function closeLoadProjectModal() {
+            const modal = document.getElementById('loadProjectModal');
+            modal.style.display = 'none';
+        }
+        
+        function loadProject(projectId) {
+            const projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+            const project = projects.find(p => p.id == projectId);
+            if (project) {
+                const editables = document.querySelectorAll('.editable');
+                editables.forEach((el, index) => {
+                    if (project.content[index]) {
+                        el.innerHTML = project.content[index];
+                    }
+                });
+                selectTableDesign(project.selectedDesign || 'design-1');
+                selectBackground(project.selectedBackground || 'light');
+                closeLoadProjectModal();
+                alert('Project loaded successfully! You can now edit the content.');
+                if (!editMode) {
+                    toggleEditMode();
+                }
+            }
+        }
+        
+        function deleteProject(projectId) {
+            if (confirm('Are you sure you want to delete this project?')) {
+                let projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+                projects = projects.filter(p => p.id != projectId);
+                localStorage.setItem('savedProjects', JSON.stringify(projects));
+                showLoadProjectModal();
+            }
+        }
+        
+        // Table Design Selection
+        function selectTableDesign(design) {
+            const tableWrappers = document.querySelectorAll('.table-wrapper');
+            const tableSelectBtns = document.querySelectorAll('.table-select-btn');
+            tableWrappers.forEach(wrapper => {
+                wrapper.classList.remove('active');
+                if (wrapper.getAttribute('data-design') === design) {
+                    wrapper.classList.add('active');
+                }
+            });
+            tableSelectBtns.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('onclick').includes(design)) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+        
+        // Background Color Selection
+        let selectedBackground = 'light';
+        
+        function selectBackground(bg) {
+            selectedBackground = bg;
+            const bgSelectBtns = document.querySelectorAll('.bg-select-btn');
+            const a4Container = document.querySelector('.a4-container');
+            a4Container.classList.remove('bg-light', 'bg-white', 'bg-blue', 'bg-cream');
+            a4Container.classList.add(`bg-${bg}`);
+            bgSelectBtns.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('onclick').includes(bg)) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'p') {
+                e.preventDefault();
+                window.print();
+            }
+        });
+    </script>
+</body>
+</html>
