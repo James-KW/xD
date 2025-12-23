@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1100">
+    <title>Author Information - Kuwait Zoo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a6d38 0%, #2e8b57 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .author-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 800px;
+            overflow: hidden;
+        }
+        
+        .author-header {
+            background: linear-gradient(135deg, #2e8b57 0%, #1a6d38 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .author-header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .author-header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        .author-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid white;
+            margin: 20px auto;
+            background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: white;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .author-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .author-avatar i {
+            position: absolute;
+            z-index: 1;
+        }
+        
+        .author-avatar.has-image i {
+            display: none;
+        }
+        
+        .author-content {
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .contact-section, .social-section, .coffee-section {
+            background: linear-gradient(135deg, #2e8b57 0%, #1a6d38 100%);
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #1a6d38;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .coffee-section {
+            grid-column: span 2;
+        }
+        
+        .section-title {
+            color: white;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255,255,255,0.5);
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .contact-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background: rgba(255, 255, 255, 0.25);
+            border-color: white;
+        }
+        
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .contact-details h3 {
+            color: white;
+            margin-bottom: 5px;
+            font-size: 16px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .contact-details p {
+            color: rgba(255,255,255,0.9);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .social-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            backdrop-filter: blur(5px);
+        }
+        
+        .social-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            background: rgba(255, 255, 255, 0.25);
+            border-color: white;
+        }
+        
+        .social-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        
+        /* Social Icon Original Colours */
+        .social-card.facebook .social-icon {
+            color: #1877f2; /* Facebook blue */
+        }
+        
+        .social-card.github .social-icon {
+            color: #ffffff; /* GitHub white */
+        }
+        
+        .social-card.whatsapp .social-icon {
+            color: #25d366; /* WhatsApp green */
+        }
+        
+        .social-card.youtube .social-icon {
+            color: #ff0000; /* YouTube red */
+        }
+        
+        .social-card h3 {
+            color: white;
+            margin-bottom: 5px;
+            font-size: 16px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .social-card p {
+            color: rgba(255,255,255,0.9);
+            font-size: 13px;
+        }
+        
+        /* Coffee Section Styles */
+        .coffee-card {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid rgba(255,255,255,0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .coffee-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            background: rgba(255, 255, 255, 0.25);
+            border-color: white;
+        }
+        
+        .coffee-image {
+            flex-shrink: 0;
+            width: 200px;
+            height: 200px;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 3px solid white;
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 60px;
+        }
+        
+        .coffee-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .coffee-image img:hover {
+            transform: scale(1.05);
+        }
+        
+        .coffee-text {
+            flex: 1;
+        }
+        
+        .coffee-text h3 {
+            color: white;
+            font-size: 28px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+        
+        .coffee-text p {
+            color: rgba(255,255,255,0.9);
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        
+        .author-footer {
+            background: linear-gradient(135deg, #2e8b57 0%, #1a6d38 100%);
+            padding: 20px;
+            text-align: center;
+            border-top: 2px solid #1a6d38;
+        }
+        
+        .back-button {
+            background: white;
+            color: #2e8b57;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+            border: 2px solid white;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.9);
+        }
+    </style>
+</head>
+<body>
+    <div class="author-container">
+        <div class="author-header">
+            <h1><i class="fas fa-user-circle"></i> Author Information</h1>
+            <p>Kuwait Zoo Management System - Contact Details</p>
+            <div class="author-avatar" id="profileAvatar">
+                <img src="https://raw.githubusercontent.com/James-KW/Zoo-Dataa/refs/heads/main/image/james.jpg" 
+                     alt="Mr. James Profile Picture" 
+                     onload="this.parentElement.classList.add('has-image')"
+                     onerror="this.style.display='none'; this.parentElement.classList.remove('has-image')">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <h2>Mr. James</h2>
+            <p>Lead Developer & System Administrator</p>
+        </div>
+        
+        <div class="author-content">
+            <div class="contact-section">
+                <h2 class="section-title"><i class="fas fa-address-book"></i> Contact Details</h2>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>Phone Number</h3>
+                            <p>+96598064347</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>Email Address</h3>
+                            <p>jamesmr283@gmail.com</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>Hobby</h3>
+                            <p>Programming is my hobby... when laziness doesn't surround me! 🦥</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>My weekly routine</h3>
+                            <p>Saturday to Thursday: 🍔 Eat, 😴 Sleep, Work, 💻 Code (when not lazy), 🔄 Repeat<br>
+Weekend mode: Full thug life! 💀</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="social-section">
+                <h2 class="section-title"><i class="fas fa-share-alt"></i> Social Media</h2>
+                <div class="social-grid">
+                    <a href="https://www.facebook.com/share/1QJ5CEGc5z/" target="_blank" class="social-card facebook">
+                        <div class="social-icon">
+                            <i class="fab fa-facebook-f"></i>
+                        </div>
+                        <h3>Facebook</h3>
+                        <p>Connect on Facebook</p>
+                    </a>
+                    
+                    <a href="https://github.com/James404-cyber" target="_blank" class="social-card github">
+                        <div class="social-icon">
+                            <i class="fab fa-github"></i>
+                        </div>
+                        <h3>GitHub</h3>
+                        <p>View Projects & Code</p>
+                    </a>
+                    
+                    <a href="https://wa.me/96598064347" target="_blank" class="social-card whatsapp">
+                        <div class="social-icon">
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                        <h3>WhatsApp</h3>
+                        <p>Message Directly</p>
+                    </a>
+                    
+                    <a href="https://youtube.com" target="_blank" class="social-card youtube">
+                        <div class="social-icon">
+                            <i class="fab fa-youtube"></i>
+                        </div>
+                        <h3>YouTube</h3>
+                        <p>Watch Zoo Videos</p>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Coffee Section with your GitHub image -->
+            <div class="coffee-section">
+                <h2 class="section-title"><i class="fas fa-coffee"></i> My Fuel</h2>
+                <div class="coffee-card">
+                    <div class="coffee-image">
+                        <!-- Your GitHub coffee image -->
+                        <img src="https://raw.githubusercontent.com/James-KW/Zoo-Dataa/refs/heads/main/image/coffee.png" 
+                             alt="A cup of coffee - essential fuel for coding"
+                             onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\"fas fa-coffee\"></i>';">
+                    </div>
+                    <div class="coffee-text">
+                        <h3><i class="fas fa-mug-hot"></i> Coffee for me</h3>
+                        <p>The essential companion for late-night coding sessions and bringing ideas to life. No project is complete without the perfect brew to fuel creativity and focus. This cup keeps me going through all those coding marathons!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="author-footer">
+            <button class="back-button" onclick="window.location.href='index.html'">
+                <i class="fas fa-arrow-left"></i> Back to Main Page
+            </button>
+        </div>
+    </div>
+</body>
+</html>
